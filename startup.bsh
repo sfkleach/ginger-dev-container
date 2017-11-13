@@ -1,0 +1,13 @@
+pushd ${GINGER_DEV_HOME}
+if [ ! -e appginger.png ]; then
+	git clone https://github.com/Spicery/ginger.git .
+	git checkout --track origin/development
+fi
+if [ ! -e configure ]; then
+	make -f JumpStart.makefile configure
+fi
+if [ ! -e /usr/local/bin/ginger ]; then
+	make
+	sudo make install-as-is 
+fi
+popd
