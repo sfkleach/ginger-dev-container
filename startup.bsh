@@ -1,21 +1,13 @@
+# Script to bring Ginger up to date.
 if [ ! -e ${GINGER_DEV_HOME} ]; then
 	echo "Creating ${GINGER_DEV_HOME}"
 	mkdir -p ${GINGER_DEV_HOME}
 fi
 pushd ${GINGER_DEV_HOME}
 if [ ! -e appginger.png ]; then
-	echo "Cloning https://github.com/Spicery/ginger.git into ${GINGER_DEV_HOME}"
-	git clone https://github.com/Spicery/ginger.git .
-	git checkout --track origin/development
-fi
-if [ ! -e configure ]; then
-	echo "Configuring the build system"
-	make -f JumpStart.makefile configure
-fi
-if [ ! -e /usr/local/bin/ginger ]; then
-	echo "Building Ginger"
+	tar zxf /var/projects/Spicery/ginger-ready-to-go.tgz
+	git pull
 	make
-	echo "Install Ginger"
 	sudo make install-as-is 
 fi
 popd

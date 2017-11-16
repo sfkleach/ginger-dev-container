@@ -1,16 +1,19 @@
 FROM ubuntu:16.10
 MAINTAINER Stephen Leach "sfkleach@gmail.com"
-ENV REFRESHED_AT 2017-11-13:22:32
+ENV REFRESHED_AT 2017-11-16
 RUN apt-get update && apt-get upgrade -y
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y apt-utils
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y git sudo make curl
 
-# Now set up the pre-requisites, which are stored in a slightly odd place right now.
-RUN mkdir -p /tmp/setup /tmp/setup/devtools/docker-scripts
-WORKDIR /tmp/setup
-RUN curl https://raw.githubusercontent.com/Spicery/ginger/development/JumpStart.makefile > JumpStart.makefile
-RUN curl https://raw.githubusercontent.com/Spicery/ginger/development/devtools/docker-scripts/install-prerequisites.bsh > devtools/docker-scripts/install-prerequisites.bsh
+# Cloning https://github.com/Spicery/ginger.git into /var/projects/Spicery/ginger
+RUN mkdir -p /var/projects/Spicery/ginger
+WORKDIR /var/projects/Spicery/ginger
+RUN git clone https://github.com/Spicery/ginger.git .
+RUN git checkout --track origin/development
 RUN make -f JumpStart.makefile ubuntu
+RUN make -f JumpStart.makefile build
+RUN make install-as-is
+RUN tar cf - . | gzip > ../ginger-ready-to-go.tgz
 
 # And now set up the initial user.
 RUN useradd -G sudo --create-home --shell /bin/bash gdev
